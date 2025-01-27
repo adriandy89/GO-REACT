@@ -23,6 +23,9 @@ func main() {
 	app.Domain = "http://localhost:8080"
 	log.Printf("Starting server on %s", app.Domain)
 
+	// register routes
+	http.HandleFunc("/", Hello)
+
 	// start web server
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
