@@ -13,23 +13,20 @@ type application struct {
 }
 
 func main() {
-	// set application configuration
+	// set application config
 	var app application
 
-	// read from command line arguments
+	// read from command line
 
-	// connect to database
+	// connect to the database
 
-	app.Domain = "http://localhost:8080"
-	log.Printf("Starting server on %s", app.Domain)
+	app.Domain = "example.com"
 
-	// register routes
-	http.HandleFunc("/", Hello)
+	log.Println("Starting application on port", port)
 
-	// start web server
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	// start a web server
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), app.routes())
 	if err != nil {
-		fmt.Println("server failed to start")
 		log.Fatal(err)
 	}
 }
