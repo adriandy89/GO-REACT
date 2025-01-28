@@ -16,13 +16,16 @@ interface InputProps {
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (props, ref: ForwardedRef<HTMLInputElement>) => {
     return (
-      <div className="mb-3">
-        <label htmlFor={props.name} className="form-label">
+      <div className="mb-4">
+        <label
+          htmlFor={props.name}
+          className="block text-gray-100 text-sm font-bold mb-2"
+        >
           {props.title}
         </label>
         <input
           type={props.type}
-          className={props.className}
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline ${props.className}`}
           id={props.name}
           ref={ref}
           name={props.name}
@@ -31,7 +34,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           autoComplete={props.autoComplete}
           value={props.value}
         />
-        <div className={props.errorDiv}>{props.errorMsg}</div>
+        {props.errorMsg && (
+          <div className="text-red-500 text-xs italic mt-2">
+            {props.errorMsg}
+          </div>
+        )}
       </div>
     );
   }

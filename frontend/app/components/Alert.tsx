@@ -7,7 +7,10 @@ interface AlertProps {
 
 const Alert: React.FC<AlertProps> = (props) => {
   return (
-    <div className={"alert " + props.className} role="alert">
+    <div
+      className={"text-center p-2 mb-2 text-sm rounded-lg " + props.className}
+      role="alert"
+    >
       {props.message}
     </div>
   );
