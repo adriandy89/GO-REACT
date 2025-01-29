@@ -1,45 +1,75 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import api from "~/api";
+
+interface Genre {
+  id: number;
+  genre: string;
+}
 
 interface Movie {
   id: number;
   title: string;
   release_date: string;
-  runtime: number;
+  runtime: string;
   mpaa_rating: string;
   description: string;
+  genres: Genre[];
+  image: string;
 }
 
 const Movie = () => {
-  const [movie, setMovie] = useState<Movie | null>(null);
+  const [movie, setMovie] = useState<Movie>({
+    id: 0,
+    title: "",
+    release_date: "",
+    runtime: "",
+    mpaa_rating: "",
+    description: "",
+    genres: [],
+    image: "",
+  });
   let { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    let myMovie: Movie = {
-      id: 1,
-      title: "Highlander",
-      release_date: "1986-03-07",
-      runtime: 116,
-      mpaa_rating: "R",
-      description: "Some long description",
+    const req = async () => {
+      const { data } = await api.get(`/movies/${id}`).catch((err) => {
+        return Promise.reject(err);
+      });
+      if (data) {
+        setMovie(data);
+      }
     };
-    setMovie(myMovie);
+    req();
   }, [id]);
-
-  if (!movie) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
-      <h2>Movie: {movie.title}</h2>
-      <small>
+      <h2 className="text-2xl font-bold mb-4">Movie: {movie.title}</h2>
+      <small className="text-gray-500">
         <em>
           {movie.release_date}, {movie.runtime} minutes, Rated{" "}
           {movie.mpaa_rating}
         </em>
       </small>
-      <hr />
+      <br />
+      {movie.genres.map((g) => (
+        <span key={g.id} className="badge bg-secondary me-2">
+          {g.genre}
+        </span>
+      ))}
+      <hr className="my-4" />
+
+      {movie.image !== "" && (
+        <div className="mb-3">
+          <img
+            src={`https://image.tmdb.org/t/p/w200/${movie.image}`}
+            alt="poster"
+            className="rounded"
+          />
+        </div>
+      )}
+
       <p>{movie.description}</p>
     </div>
   );

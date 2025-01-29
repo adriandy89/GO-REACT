@@ -13,7 +13,8 @@ export default [
     route("movies", "routes/dashboard/Movies.tsx"),
     route("movies/:id", "routes/dashboard/Movie.tsx"),
     route("genres", "routes/dashboard/Genres.tsx"),
-    route("admin/movie/0", "routes/dashboard/EditMovie.tsx"),
+    route("genres/:id", "routes/dashboard/OneGenre.tsx"),
+    route("admin/movie/:id", "routes/dashboard/EditMovie.tsx"),
     route("manage-catalogue", "routes/dashboard/ManageCatalogue.tsx"),
     route("graphql", "routes/dashboard/GraphQL.tsx"),
   ]),
@@ -31,6 +32,10 @@ export default [
 //     path: "/genres",
 //     element: <Genres />,
 //   },
+// {
+//   path: "/genres/:id",
+//   element: <OneGenre />
+// },
 //   {
 //     path: "/admin/movie/0",
 //     element: <EditMovie />,

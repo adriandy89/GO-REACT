@@ -1,18 +1,77 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router";
+import api from "~/api";
 import Alert from "~/components/Alert";
 
 export default function DashboardLayout() {
   const [jwtToken, setJwtToken] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [alertClassName, setAlertClassName] = useState("hidden");
+  const [tickInterval, setTickInterval] = useState<any>();
 
   const navigate = useNavigate();
 
   const logOut = () => {
-    setJwtToken("");
-    navigate("/login");
+    const logout = async () => {
+      await api
+        .get(`/logout`)
+        .catch((err) => {
+          console.log("user not logged in");
+          return Promise.reject(err);
+        })
+        .finally(() => {
+          setJwtToken("");
+          toggleRefresh(false);
+          navigate("/login");
+        });
+    };
+    logout();
   };
+
+  const toggleRefresh = useCallback(
+    (status: boolean) => {
+      if (status) {
+        console.log("turning on ticking");
+        let i = setInterval(async () => {
+          const { data } = await api.get(`/refresh`).catch((err) => {
+            console.log("user not logged in");
+            return Promise.reject(err);
+          });
+          console.log(data);
+          if (data.access_token) {
+            setJwtToken(data.access_token);
+            navigate("/");
+          }
+        }, 600000);
+        setTickInterval(i);
+        console.log("setting tick interval to", i);
+      } else {
+        console.log("turning off ticking");
+        console.log("turning off tickInterval", tickInterval);
+        setTickInterval(null);
+        clearInterval(tickInterval);
+      }
+    },
+    [tickInterval]
+  );
+
+  useEffect(() => {
+    if (jwtToken === "") {
+      const login = async () => {
+        const { data } = await api.get(`/refresh`).catch((err) => {
+          console.log("user not logged in");
+          return Promise.reject(err);
+        });
+        console.log(data);
+        if (data.access_token) {
+          setJwtToken(data.access_token);
+          toggleRefresh(true);
+          navigate("/");
+        }
+      };
+      login();
+    }
+  }, [jwtToken, toggleRefresh]);
 
   return (
     <div className="container mx-auto p-4">
@@ -88,6 +147,7 @@ export default function DashboardLayout() {
               setJwtToken,
               setAlertClassName,
               setAlertMessage,
+              toggleRefresh,
             }}
           />
         </div>

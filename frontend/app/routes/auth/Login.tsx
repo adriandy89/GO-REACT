@@ -2,19 +2,14 @@ import { useCallback, useState, type FormEvent } from "react";
 import { useNavigate, useOutletContext } from "react-router";
 import Input from "../../components/form/Input";
 import api from "~/api";
-
-interface OutletContext {
-  setJwtToken: (token: string) => void;
-  setAlertClassName: (className: string) => void;
-  setAlertMessage: (message: string) => void;
-}
+import type { OutletContext } from "~/interfaces";
 
 const Login = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const { setJwtToken, setAlertClassName, setAlertMessage } =
+  const { setJwtToken, setAlertClassName, setAlertMessage, toggleRefresh } =
     useOutletContext<OutletContext>();
 
   const navigate = useNavigate();
@@ -62,6 +57,7 @@ const Login = () => {
         setJwtToken(data.access_token);
         setAlertClassName("d-none");
         setAlertMessage("");
+        toggleRefresh(true);
         navigate("/");
       }
     },
